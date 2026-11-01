@@ -464,3 +464,50 @@ The FIX field delimiter is SOH = ASCII 0x01.
 - The raw archive must preserve SOH bytes.
 - The display representation may use pipe (|) or similar for readability.
 - Do not store only pipe-delimited text in the raw archive.
+
+---
+
+## 7. Verified DSE Specific FIX Profile (v1.3.4 Certification Suite)
+
+The following parameters and custom values have been verified from the official DSE FIX Certification Test Cases v1.3.4 (2024):
+
+### 7.1 Protocol Version and Handshake
+- **BeginString (8):** `FIXT.1.1`
+- **DefaultApplVerID (1137):** `8` (FIX50SP2)
+- **First Logon Position Reports:** Upon first logon of the day (Test S1), DSE initiates sequence gap recovery by replying with `MsgSeqNum=4` and sending two `PositionReport (35=AP)` messages (`707=LMT`, `708=100000000`) followed by `SequenceReset (35=4, 123=Y)`.
+
+### 7.2 Custom Order Types and Execution Instructions
+- **Tag 40 (OrdType):**
+  - `1`: Market
+  - `2`: Limit
+  - `Z`: **Market At Best** (DSE specific). Converts unmatched remainder into a Limit order at execution price. Rejects with error `(654)` if no opposite order exists in book.
+- **Tag 18 (ExecInst):**
+  - `S`: **Suspend / Private Order**. Order is accepted into exchange custody but kept off the public order book. Reported with `OrdStatus(39)=Z`.
+  - `q`: **Release Private Order**. Sent via `OrderCancelReplaceRequest (35=G)` with `18=q` to release resting private order into the market. Assigns a new `OrderID(37)`.
+  - `w`: **WholeOrNone**. Mandatory for all orders on the `BLOCK` board (`762=BLOCK`). Orders without `18=w` on BLOCK board are rejected with error `(1154)`.
+- **Tag 39 (OrdStatus) & Tag 150 (ExecType):**
+  - `39=Z`: **Private / Suspended**. Acknowledged order not yet released to book.
+  - `150=I`: **OrderStatus**. Response to `OrderStatusRequest (35=H)`.
+  - `150=C / 39=C`: **Expired**. Emitted when IOC (`59=3`) or FOK (`59=4`) expire unmatched.
+
+### 7.3 DSE Boards (Tag 762 SecuritySubType)
+| Value | Board Name | Trading Rules & Constraints |
+|---|---|---|
+| `PUBLIC` | Main Continuous Board | Normal equity trading; Market, Limit, Market At Best allowed. |
+| `BLOCK` | Block Order Board | Minimum value 500k BDT; requires `18=w`; Limit only (`40=2`); IOC allowed; FOK, MinQty, and Iceberg (`1138`) strictly rejected. |
+| `BUYIN` | Buy-In Auction Board | **Sell orders only (`54=2`)**. Buy orders rejected with `(1401): You may not enter buy orders.` |
+| `SPUBLIC` | SME / Qualified Investor Board | Buy orders restricted to Qualified Investor (`QI`) BOIDs (validated against Tag 1 Account). Non-QI buy rejected with `(1412)`. Sell orders allowed for all accounts. |
+| `ATBPUB` | Alternative Trading Board | ATB instruments with price band check `(1408)`. |
+
+### 7.4 Standard DSE Repeating Party ID Block (Tag 453)
+Every order and execution report contains the 5-party nested group:
+1. `448=<Client BOID>` | `447=C` | `452=5` (Investor ID)
+2. `448=<FIX Connector ID>` | `447=C` | `452=11` (Order Origination Trader)
+3. `448=<Trader ID>` | `447=C` | `452=36` (Entering Trader)
+4. `448=<Trader ID>` | `447=C` | `452=12` (Executing Trader)
+5. `448=<Broker Firm Code>` | `447=C` | `452=1` (Executing Firm)
+
+### 7.5 DSE Order Rejection Norm
+- When DSE rejects an order (`39=8, 150=8`), Tag 37 (OrderID) is **always set to `NONE`**.
+- Error details are conveyed in Tag 58 (Text) prefixed with standard DSE code `(XXXX): Message`.
+

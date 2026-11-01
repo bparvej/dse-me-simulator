@@ -129,3 +129,16 @@ Protocol Mode must never call any Exchange Mode components:
 - No market data interaction.
 
 An order processed in Protocol Mode must never generate a matching-engine fill.
+
+---
+
+## 10. DSE Certification Test Suite Integration
+
+Protocol Mode provides native, deterministic scenario execution for all 60 official DSE FIX Certification Test Cases (see [docs/20-DSE-Certification-Test-Cases.md](docs/20-DSE-Certification-Test-Cases.md)):
+
+- **Session & Transport Scenarios (`S1` – `S12`):** First logon PositionReport sequences, gap triggers, ResendRequest simulations, forced SequenceReset gaps, and session rejects.
+- **Market Order Scenarios (`M1` – `M12`):** Market At Best conversion, Private order custody and release, IOC/FOK expiration, and rejection with `37=NONE`.
+- **Limit Order Scenarios (`L1` – `L19`):** Circuit breaker limits, MinQty validations, 3-stage amendments, and iceberg slice display.
+- **Block Board Scenarios (`B1` – `B11`):** Block board rules, WholeOrNone enforcement, 500k BDT checks, and IOC expiration.
+- **Misc Special Cases (`Z1` – `Z6`):** Buy-In board sell-only rules, SME Qualified Investor enforcement, and gateway failover emulation.
+

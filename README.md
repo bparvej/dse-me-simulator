@@ -43,6 +43,24 @@ Simulates a full exchange environment with order books, price-time priority matc
 
 ---
 
+## DSE FIX Certification Test Suite (v1.3.4 - 2024)
+
+DSE-ME Simulator provides **complete, 100% test case coverage for all 60 official Dhaka Stock Exchange (DSE) FIX Certification Test Cases** (Specification v1.3.4, 2024).
+
+The simulator enables automated pre-certification testing against all DSE certification criteria:
+
+| Category | Cases | Description | Importance |
+|---|---|---|---|
+| **Session & Transport** | `S1` - `S12` (12 cases) | First logon, PositionReports (`35=AP`), Heartbeats, TestRequest, Gap recovery, ResendRequest, SequenceReset, SessionReject. | Critical / Important |
+| **Market Orders** | `M1` - `M12` (12 cases) | Market At Best (`40=Z`), Private orders (`18=S`), release (`18=q`), IOC, MinQty, FOK, status requests (`35=H`), invalid securities. | Critical / Important |
+| **Limit Orders** | `L1` - `L19` (19 cases) | Circuit breakers (`1408`), MinQty rules (`1378`), IOC/FOK, amendments (`35=G`), cancellations (`35=F`), Iceberg (`1138`), Pre-open session. | Critical / Important |
+| **Block Board** | `B1` - `B11` (11 cases) | Block orders (`762=BLOCK`), WholeOrNone (`18=w`), 500k BDT minimum threshold, IOC, status updates, rule violations (`1151-1155`). | Critical / Important |
+| **Misc & Special Boards** | `Z1` - `Z6` (6 cases) | Buy-In board (`BUYIN` - sell only), SME board (`SPUBLIC` - Qualified Investor only), gateway failover & reconnection. | Critical |
+
+Full test case matrix and execution parameters: [docs/20-DSE-Certification-Test-Cases.md](docs/20-DSE-Certification-Test-Cases.md).
+
+---
+
 ## Technology Stack
 
 | Component | Technology |
@@ -107,42 +125,44 @@ docker-compose exec app npm run db:migrate
 ---
 
 ## Development Phases
+ 
+ | Phase | Description | Status |
+ |---|---|---|
+ | Phase 0 | Architecture, documentation, project structure | Completed |
+ | Phase 1 | FIX TCP acceptor, session management, heartbeat, archive, dashboard | Active / In Progress |
+ | Phase 2 | Protocol Mode -- scenario engine, DSE test cases (S1-S12, M1-M12, L1-L19, B1-B11, Z1-Z6) | Pending |
+ | Phase 3 | Exchange Mode -- order books, matching engine, multi-board matching | Pending |
+ | Phase 4 | Advanced testing, replay, stress testing | Pending |
+ 
+ ---
+ 
+ ## Documentation
+ 
+ All technical documentation is in the `docs/` directory.
+ 
+ | Document | Description |
+ |---|---|
+ | docs/00-Project-Overview.md | Project purpose, scope, and objectives |
+ | docs/01-System-Architecture.md | System architecture and module design |
+ | docs/02-Technology-Stack.md | Technology choices and justifications |
+ | docs/03-Development-Roadmap.md | Phase-wise implementation plan |
+ | docs/04-FIX-Protocol-Design.md | FIX protocol design and message specifications |
+ | docs/05-FIX-Session-Management.md | FIX session lifecycle and state management |
+ | docs/06-Message-Processing.md | Message parsing, encoding, and dispatch |
+ | docs/07-FIX-Message-Archive.md | FIX message archive design and requirements |
+ | docs/08-Database-Design.md | Database schema and entity relationships |
+ | docs/09-API-Reference.md | Administration REST API reference |
+ | docs/10-Dashboard-Design.md | Web dashboard design |
+ | docs/11-Protocol-Mode.md | Protocol Mode and scenario engine |
+ | docs/12-Exchange-Mode.md | Exchange Mode architecture |
+ | docs/13-Matching-Engine-Design.md | Matching engine design |
+ | docs/14-Testing-Strategy.md | Testing strategy and test cases |
+ | docs/15-Deployment-Guide.md | Deployment instructions |
+ | docs/16-Security-Considerations.md | Security requirements and implementation |
+ | docs/17-Troubleshooting.md | Troubleshooting guide |
+ | docs/18-Configuration-Reference.md | Configuration reference |
+ | docs/20-DSE-Certification-Test-Cases.md | Official DSE FIX certification test cases (v1.3.4) |
 
-| Phase | Description | Status |
-|---|---|---|
-| Phase 0 | Architecture, documentation, project structure | In Progress |
-| Phase 1 | FIX TCP acceptor, session management, heartbeat, archive, dashboard | Pending |
-| Phase 2 | Protocol Mode -- scenario engine, order lifecycle | Pending |
-| Phase 3 | Exchange Mode -- order books, matching engine | Pending |
-| Phase 4 | Advanced testing, replay, stress testing | Pending |
-
----
-
-## Documentation
-
-All technical documentation is in the `docs/` directory.
-
-| Document | Description |
-|---|---|
-| docs/00-Project-Overview.md | Project purpose, scope, and objectives |
-| docs/01-System-Architecture.md | System architecture and module design |
-| docs/02-Technology-Stack.md | Technology choices and justifications |
-| docs/03-Development-Roadmap.md | Phase-wise implementation plan |
-| docs/04-FIX-Protocol-Design.md | FIX protocol design and message specifications |
-| docs/05-FIX-Session-Management.md | FIX session lifecycle and state management |
-| docs/06-Message-Processing.md | Message parsing, encoding, and dispatch |
-| docs/07-FIX-Message-Archive.md | FIX message archive design and requirements |
-| docs/08-Database-Design.md | Database schema and entity relationships |
-| docs/09-API-Reference.md | Administration REST API reference |
-| docs/10-Dashboard-Design.md | Web dashboard design |
-| docs/11-Protocol-Mode.md | Protocol Mode and scenario engine |
-| docs/12-Exchange-Mode.md | Exchange Mode architecture |
-| docs/13-Matching-Engine-Design.md | Matching engine design |
-| docs/14-Testing-Strategy.md | Testing strategy and test cases |
-| docs/15-Deployment-Guide.md | Deployment instructions |
-| docs/16-Security-Considerations.md | Security requirements and implementation |
-| docs/17-Troubleshooting.md | Troubleshooting guide |
-| docs/18-Configuration-Reference.md | Configuration reference |
 
 ---
 

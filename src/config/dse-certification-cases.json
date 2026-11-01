@@ -1,0 +1,3787 @@
+[
+  {
+    "id": "S1",
+    "category": "SessionTransport",
+    "description": "First Logon of day and receipt of PositionReports",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [],
+    "steps": [
+      {
+        "stepNumber": 17,
+        "description": "A17: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 18,
+        "description": "A18: Sequence numbers on both sides are 1/1. This should be executed at the start of session.",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 20,
+        "description": "A20: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "FIX Logon message is received by DSE with correct information.",
+        "sampleFix": "35=A"
+      },
+      {
+        "stepNumber": 21,
+        "description": "A21: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE replies back with a FIX Logon message",
+        "sampleFix": "35=A"
+      },
+      {
+        "stepNumber": 22,
+        "description": "A22: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a ResendRequest for MsgSeqNum 1 - 3 (or 1 to infinity)",
+        "sampleFix": "35=2"
+      },
+      {
+        "stepNumber": 23,
+        "description": "A23: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=4"
+      },
+      {
+        "stepNumber": 24,
+        "description": "A24: 5.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a heartbeat with MsgSeqNum 3",
+        "sampleFix": "35=0"
+      },
+      {
+        "stepNumber": 25,
+        "description": "A25: 6.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends a heartbeat with MsgSeqNum 5",
+        "sampleFix": "35=0"
+      }
+    ]
+  },
+  {
+    "id": "S2",
+    "category": "SessionTransport",
+    "description": "Session heartbeats",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 28; tCRITICAL / STOP ON FAIL; Session is connected"
+    ],
+    "steps": [
+      {
+        "stepNumber": 28,
+        "description": "A28: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 29,
+        "description": "A29: Session is connected",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 31,
+        "description": "A31: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends heartbeats",
+        "sampleFix": "35=0"
+      },
+      {
+        "stepNumber": 32,
+        "description": "A32: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends heartbeats",
+        "sampleFix": "35=0"
+      },
+      {
+        "stepNumber": 33,
+        "description": "A33: 3.0",
+        "direction": "Inbound/Outbound",
+        "expectedResult": "Verify at least 5 heartbeats in each direction",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "S3",
+    "category": "SessionTransport",
+    "description": "Logout",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 36; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 36,
+        "description": "A36: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 37,
+        "description": "A37: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 39,
+        "description": "A39: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=5"
+      },
+      {
+        "stepNumber": 40,
+        "description": "A40: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE replies back confirming logout",
+        "sampleFix": "35=5"
+      },
+      {
+        "stepNumber": 41,
+        "description": "A41: 3.0",
+        "direction": "Internal",
+        "expectedResult": "Verify that the session is disconnected and TCP socket is not active",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "S4",
+    "category": "SessionTransport",
+    "description": "Inbound Test Request",
+    "importance": "OPTIONAL / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 44; tOPTIONAL / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 44,
+        "description": "A44: tOPTIONAL / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 45,
+        "description": "A45: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 47,
+        "description": "A47: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends TestRequest",
+        "sampleFix": "35=1"
+      },
+      {
+        "stepNumber": 48,
+        "description": "A48: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE replies to TestRequest",
+        "sampleFix": "35=0"
+      }
+    ]
+  },
+  {
+    "id": "S5",
+    "category": "SessionTransport",
+    "description": "Outbound Test Request",
+    "importance": "OPTIONAL / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 51; tOPTIONAL / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 51,
+        "description": "A51: tOPTIONAL / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 52,
+        "description": "A52: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 54,
+        "description": "A54: 1.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 55,
+        "description": "A55: 2.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 56,
+        "description": "A56: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends TestRequest",
+        "sampleFix": "35=1"
+      },
+      {
+        "stepNumber": 57,
+        "description": "A57: 4.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=0"
+      }
+    ]
+  },
+  {
+    "id": "S6",
+    "category": "SessionTransport",
+    "description": "Message recovery by Broker",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 60; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 60,
+        "description": "A60: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 61,
+        "description": "A61: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 63,
+        "description": "A63: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 64,
+        "description": "A64: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=0"
+      },
+      {
+        "stepNumber": 65,
+        "description": "A65: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=2"
+      },
+      {
+        "stepNumber": 66,
+        "description": "A66: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=AP"
+      },
+      {
+        "stepNumber": 67,
+        "description": "A67: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "S7",
+    "category": "SessionTransport",
+    "description": "Message recovery by DSE",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 70; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 70,
+        "description": "A70: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 71,
+        "description": "A71: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 73,
+        "description": "A73: 1.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 74,
+        "description": "A74: 2.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 75,
+        "description": "A75: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=2"
+      },
+      {
+        "stepNumber": 76,
+        "description": "A76: 4.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=4"
+      },
+      {
+        "stepNumber": 77,
+        "description": "A77: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "S8",
+    "category": "SessionTransport",
+    "description": "Broker processing SessionReject by DSE",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 80; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 80,
+        "description": "A80: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 81,
+        "description": "A81: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 83,
+        "description": "A83: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a FIX message to DSE which is invalid from FIX perspective",
+        "sampleFix": "35=&"
+      },
+      {
+        "stepNumber": 84,
+        "description": "A84: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the incoming message",
+        "sampleFix": "35=3"
+      },
+      {
+        "stepNumber": 85,
+        "description": "A85: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "S9",
+    "category": "SessionTransport",
+    "description": "DSE processing SessionReject by broker",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 88; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 88,
+        "description": "A88: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 89,
+        "description": "A89: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 91,
+        "description": "A91: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a new Order to DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 92,
+        "description": "A92: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message to broker which is invalid from broker perspective",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 93,
+        "description": "A93: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a session/transport Reject (35=3) message to reject the incoming ExecutionReport message",
+        "sampleFix": "35=3"
+      },
+      {
+        "stepNumber": 94,
+        "description": "A94: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "S10",
+    "category": "SessionTransport",
+    "description": "Broker processing SequenceReset message",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 97; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 97,
+        "description": "A97: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 98,
+        "description": "A98: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 100,
+        "description": "A100: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a ResendRequest message for a range containing transport messages",
+        "sampleFix": "35=2"
+      },
+      {
+        "stepNumber": 101,
+        "description": "A101: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 102,
+        "description": "A102: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends a SequenceReset message",
+        "sampleFix": "35=4"
+      },
+      {
+        "stepNumber": 103,
+        "description": "A103: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 104,
+        "description": "A104: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": "35=0"
+      }
+    ]
+  },
+  {
+    "id": "S11",
+    "category": "SessionTransport",
+    "description": "DSE processing SequenceReset message",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [],
+    "steps": [
+      {
+        "stepNumber": 107,
+        "description": "A107: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 108,
+        "description": "A108: Session is disconnected",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 110,
+        "description": "A110: 1.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 111,
+        "description": "A111: 2.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a Logon message to connect the session with DSE. But since DSE has stopped the broker connector, the Logon will fail with no response from DSE",
+        "sampleFix": "35=A"
+      },
+      {
+        "stepNumber": 112,
+        "description": "A112: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 113,
+        "description": "A113: 4.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a Logon message to connect to the session again",
+        "sampleFix": "35=A"
+      },
+      {
+        "stepNumber": 114,
+        "description": "A114: 5.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=A"
+      },
+      {
+        "stepNumber": 115,
+        "description": "A115: 6.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends a ResendRequest to recover message",
+        "sampleFix": "35=2"
+      },
+      {
+        "stepNumber": 116,
+        "description": "A116: 7.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a SequenceReset message",
+        "sampleFix": "35=4"
+      },
+      {
+        "stepNumber": 117,
+        "description": "A117: 8.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 118,
+        "description": "A118: 9.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": "35=0"
+      }
+    ]
+  },
+  {
+    "id": "S12",
+    "category": "SessionTransport",
+    "description": "Unsupported application messages are rejected with 35=3/Session Reject",
+    "importance": "OPTIONAL / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 121; tOPTIONAL / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 121,
+        "description": "A121: tOPTIONAL / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 122,
+        "description": "A122: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 124,
+        "description": "A124: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=Q"
+      },
+      {
+        "stepNumber": 125,
+        "description": "A125: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the message using Session reject",
+        "sampleFix": "35=3"
+      },
+      {
+        "stepNumber": 126,
+        "description": "A126: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M1",
+    "category": "MarketOrders",
+    "description": "Market At Best order which is rejected because there is no opposite order in order book",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 17; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 17,
+        "description": "A17: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 18,
+        "description": "A18: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 19,
+        "description": "A19: Market is open and accepting orders. There is no SELL order for the security in the market.",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 21,
+        "description": "A21: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 22,
+        "description": "A22: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 23,
+        "description": "A23: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M2",
+    "category": "MarketOrders",
+    "description": "Place Private market order when no opposite order. Attempt to release the order is rejected (*Note 2*)",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 26; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 26,
+        "description": "A26: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 27,
+        "description": "A27: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 28,
+        "description": "A28: Market is open and accepting orders. There is no SELL order for the security in the market.",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 30,
+        "description": "A30: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order is marked as private with 18/ExecInst=S",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 31,
+        "description": "A31: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the order as a private order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 32,
+        "description": "A32: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends an OrderCancelReplaceRequest to amend the order 18/ExecInst=q to release it in the market",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 33,
+        "description": "A33: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the amendment request",
+        "sampleFix": "35=9"
+      },
+      {
+        "stepNumber": 34,
+        "description": "A34: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M3",
+    "category": "MarketOrders",
+    "description": "Market order which is fully executed",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 37; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 37,
+        "description": "A37: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 38,
+        "description": "A38: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 39,
+        "description": "A39: Market is open and accepting orders. There is an active SELL limit order for the security in the market with quantity >= 500",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 41,
+        "description": "A41: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 42,
+        "description": "A42: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 43,
+        "description": "A43: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "Order is fully executed",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 44,
+        "description": "A44: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M4",
+    "category": "MarketOrders",
+    "description": "Private market order which is fully executed on release (*Note 2*)",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 47; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 47,
+        "description": "A47: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 48,
+        "description": "A48: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 49,
+        "description": "A49: Market is open and accepting orders. There is an active SELL limit order for the security in the market with quantity >= 700",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 51,
+        "description": "A51: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new private market order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 52,
+        "description": "A52: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the private order. The 39/OrdStatus is Z/Private",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 53,
+        "description": "A53: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 54,
+        "description": "A54: 4.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends an OrderCancelReplace request to amend the order 18/ExecInst=q to release it in the market",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 55,
+        "description": "A55: 5.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the amendment request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 56,
+        "description": "A56: 6.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=F/Trade to report full fill on the order. The 39/OrdStatus is 2/Filled",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 57,
+        "description": "A57: 7.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M5",
+    "category": "MarketOrders",
+    "description": "Market At Best order which is partially filled and remaining quantity is converted to limit order",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 60; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 60,
+        "description": "A60: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 61,
+        "description": "A61: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 62,
+        "description": "A62: Market is open and accepting orders. There is an active SELL limit order for the security in the market with quantity = 700",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 64,
+        "description": "A64: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new market at best order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 65,
+        "description": "A65: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is 0/New",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 66,
+        "description": "A66: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=F/Trade to report a partial fill of 700 shares on the order. The 39/OrdStatus is 1/Partially Filled",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 67,
+        "description": "A67: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 68,
+        "description": "A68: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M6",
+    "category": "MarketOrders",
+    "description": "Market order with order validity of ImmediateOrCancel is partially filled, and remaining quantity expires",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 71; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 71,
+        "description": "A71: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 72,
+        "description": "A72: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 73,
+        "description": "A73: Market is open and accepting orders. There is an active SELL limit order for the security in the market with quantity = 500",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 75,
+        "description": "A75: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new IOC market order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 76,
+        "description": "A76: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is 0/New",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 77,
+        "description": "A77: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=F/Trade to report a partial fill of 500 shares on the order. The 39/OrdStatus is 1/Partially Filled",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 78,
+        "description": "A78: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends order expiry notification for remaining quantity",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 79,
+        "description": "A79: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M7",
+    "category": "MarketOrders",
+    "description": "Market order with minimum fill quantity + order validity of ImmediateOrCancel is expired by DSE",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 82; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 82,
+        "description": "A82: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 83,
+        "description": "A83: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 84,
+        "description": "A84: Market is open and accepting orders. There is an active SELL limit order for the security in the market with quantity < 1200",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 86,
+        "description": "A86: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new IOC market order with minimum fill quantity. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 87,
+        "description": "A87: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is 0/New  Note that DSE reports 59/TimeInForce=4/FOK.",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 88,
+        "description": "A88: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends order expiry notification",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 89,
+        "description": "A89: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M8",
+    "category": "MarketOrders",
+    "description": "Market order with minimum fill quantity + order validity of ImmediateOrCancel is filled",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 92; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 92,
+        "description": "A92: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 93,
+        "description": "A93: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 94,
+        "description": "A94: Market is open and accepting orders. There is an active SELL limit order for the security in the market with quantity > 1000",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 96,
+        "description": "A96: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new IOC market order with minimum fill quantity. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 97,
+        "description": "A97: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 98,
+        "description": "A98: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends a full fill on the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 99,
+        "description": "A99: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M9",
+    "category": "MarketOrders",
+    "description": "Market order with order validity of FillOrKill is expired by DSE",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 102; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 102,
+        "description": "A102: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 103,
+        "description": "A103: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 104,
+        "description": "A104: Market is open and accepting orders. There is an active SELL limit order for the security in the market with quantity < 1200",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 106,
+        "description": "A106: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new FOK market order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 107,
+        "description": "A107: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is 0/New",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 108,
+        "description": "A108: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 109,
+        "description": "A109: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M10",
+    "category": "MarketOrders",
+    "description": "Market order with order validity of FillOrKill is filled",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 112; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 112,
+        "description": "A112: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 113,
+        "description": "A113: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 114,
+        "description": "A114: Market is open and accepting orders. There is an active SELL limit order for the security in the market with quantity >= 1300",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 116,
+        "description": "A116: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new FOK market order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 117,
+        "description": "A117: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is 0/New",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 118,
+        "description": "A118: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends full fill for the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 119,
+        "description": "A119: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M11",
+    "category": "MarketOrders",
+    "description": "Order Status of a rejected Market order",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 122; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 122,
+        "description": "A122: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 123,
+        "description": "A123: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 124,
+        "description": "A124: Market is open and accepting orders. There is no active SELL limit order for the security in the market",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 126,
+        "description": "A126: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new market order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 127,
+        "description": "A127: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 128,
+        "description": "A128: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=H"
+      },
+      {
+        "stepNumber": 129,
+        "description": "A129: 4.0",
+        "direction": "Internal",
+        "expectedResult": "DSE rejects the request for the unknown order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 130,
+        "description": "A130: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "M12",
+    "category": "MarketOrders",
+    "description": "Order for invalid security",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 133; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 133,
+        "description": "A133: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 134,
+        "description": "A134: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 135,
+        "description": "A135: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 137,
+        "description": "A137: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new market order for a security which does not exist. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 138,
+        "description": "A138: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 139,
+        "description": "A139: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L1",
+    "category": "LimitOrders",
+    "description": "Limit order which is rejected due to price range trade rule",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 24; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 24,
+        "description": "A24: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 25,
+        "description": "A25: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 26,
+        "description": "A26: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 28,
+        "description": "A28: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 29,
+        "description": "A29: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 30,
+        "description": "A30: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L2",
+    "category": "LimitOrders",
+    "description": "Limit order which is rejected due to minimum fill quantity not being equal to order quantity",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 33; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 33,
+        "description": "A33: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 34,
+        "description": "A34: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 35,
+        "description": "A35: Market is open and accepting orders.",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 37,
+        "description": "A37: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order has minimum fill quantity value specified in 110/MinQty",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 38,
+        "description": "A38: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 39,
+        "description": "A39: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L3",
+    "category": "LimitOrders",
+    "description": "Limit order with minimum fill quantity and order validity ImmediateOrCancel is fully executed",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 42; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 42,
+        "description": "A42: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 43,
+        "description": "A43: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 44,
+        "description": "A44: Market is open and accepting orders. There is an active BUY limit order for the security in the market with quantity >= 100",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 46,
+        "description": "A46: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order has minimum fill quantity value specified in 110/MinQty",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 47,
+        "description": "A47: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 48,
+        "description": "A48: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "Order is fully executed",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 49,
+        "description": "A49: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L4",
+    "category": "LimitOrders",
+    "description": "Limit order with order validity of FillOrKill is fully executed",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 52; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 52,
+        "description": "A52: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 53,
+        "description": "A53: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 54,
+        "description": "A54: Market is open and accepting orders. There is an active BUY limit order for the security in the market with quantity >= 1000",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 56,
+        "description": "A56: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order has a validity of 59/TimeInForce=4/FOK",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 57,
+        "description": "A57: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 58,
+        "description": "A58: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "Order is fully executed",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 59,
+        "description": "A59: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L5",
+    "category": "LimitOrders",
+    "description": "Limit order with order validity of ImmediateOrCancel (without minimum fill quantity) expires",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 62; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 62,
+        "description": "A62: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 63,
+        "description": "A63: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 64,
+        "description": "A64: Market is open and accepting orders. There is no BUY order in market for the security.",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 66,
+        "description": "A66: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new market order. The message contains tags/values as required by DSE and 59/TimeInForce=3/IOC",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 67,
+        "description": "A67: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is 0/New",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 68,
+        "description": "A68: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 69,
+        "description": "A69: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L6",
+    "category": "LimitOrders",
+    "description": "tL6",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 72; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 72,
+        "description": "A72: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 73,
+        "description": "A73: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 74,
+        "description": "A74: Market is open and accepting orders. There is an active BUY limit order for the security in the market with quantity = 700",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 76,
+        "description": "A76: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new IOC limit order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 77,
+        "description": "A77: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is 0/New",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 78,
+        "description": "A78: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=F/Trade to report a partial fill of 700 shares on the order. The 39/OrdStatus is 1/Partially Filled",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 79,
+        "description": "A79: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends expiry notification for remaining quantity",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 80,
+        "description": "A80: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L7",
+    "category": "LimitOrders",
+    "description": "Limit buy order partially fills, is amended to increase price, after which it is fully filled",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 83; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 83,
+        "description": "A83: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 84,
+        "description": "A84: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 85,
+        "description": "A85: Market is open and accepting orders. There are 2 active SELL orders with 1200 @ Price1 and 1400 @ Price2",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 87,
+        "description": "A87: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new limit order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 88,
+        "description": "A88: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 89,
+        "description": "A89: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=F/Trade to report that 1200 shares have executed. The 39/OrdStatus is also 1/Partiall Filled.",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 90,
+        "description": "A90: 4.0",
+        "direction": "Internal",
+        "expectedResult": "Broker sends amendment request to change price",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 91,
+        "description": "A91: 5.0",
+        "direction": "Internal",
+        "expectedResult": "DSE accepts amendment request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 92,
+        "description": "A92: 6.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 93,
+        "description": "A93: 7.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L8",
+    "category": "LimitOrders",
+    "description": "Limit sell order with 3 amendments to change BOTH price and quantity. One amendment is rejected due to trading rule",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 96; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 96,
+        "description": "A96: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 97,
+        "description": "A97: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 98,
+        "description": "A98: Market is open and accepting orders. There is no active BUY order for the security in the market",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 100,
+        "description": "A100: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new limit sell order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 101,
+        "description": "A101: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 102,
+        "description": "A102: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends amendment request to increase quantity AND decrease price. Price violates trading rule",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 103,
+        "description": "A103: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects amendment request",
+        "sampleFix": "35=9"
+      },
+      {
+        "stepNumber": 104,
+        "description": "A104: 5.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends amendment request to increase quantity AND price",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 105,
+        "description": "A105: 6.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts amendment request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 106,
+        "description": "A106: 7.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends amendment request to decrease quantity AND price",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 107,
+        "description": "A107: 8.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts amendment request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 108,
+        "description": "A108: 9.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L9",
+    "category": "LimitOrders",
+    "description": "Limit buy order with a partial fill, followed by accepted amendment, and accepted cancellation",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 111; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 111,
+        "description": "A111: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 112,
+        "description": "A112: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 113,
+        "description": "A113: Market is open and accepting orders. There is an active SELL order for the security in the market with quantity = 2000",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 115,
+        "description": "A115: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new limit buy order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 116,
+        "description": "A116: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 117,
+        "description": "A117: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=F/Trade to report a fill of 2000 shares. The 39/OrdStatus changed to 1/Part Filled.",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 118,
+        "description": "A118: 4.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends amendment request to increase quantity",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 119,
+        "description": "A119: 5.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts amendment request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 120,
+        "description": "A120: 6.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a cancel request for the order",
+        "sampleFix": "35=F"
+      },
+      {
+        "stepNumber": 121,
+        "description": "A121: 7.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts cancellation request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 122,
+        "description": "A122: 8.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L10",
+    "category": "LimitOrders",
+    "description": "Order type of limit buy order is amended to market order",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 125; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 125,
+        "description": "A125: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 126,
+        "description": "A126: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 127,
+        "description": "A127: Market is open and accepting orders. There is no SELL limit order for the security in the market",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 129,
+        "description": "A129: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new limit buy order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 130,
+        "description": "A130: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 131,
+        "description": "A131: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends amendment request to change order type to market",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 132,
+        "description": "A132: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects amendment request",
+        "sampleFix": "35=9"
+      },
+      {
+        "stepNumber": 133,
+        "description": "A133: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 134,
+        "description": "A134: 6.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends amendment request to change order type to market",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 135,
+        "description": "A135: 7.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts amendment request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 136,
+        "description": "A136: 8.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 137,
+        "description": "A137: 8.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L11",
+    "category": "LimitOrders",
+    "description": "Limit IOC order partially executes and expires",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 140; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 140,
+        "description": "A140: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 141,
+        "description": "A141: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 142,
+        "description": "A142: Market is open and accepting orders. There is a BUY limit order for the security in the market with quantity = 3200",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 144,
+        "description": "A144: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new limit order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 145,
+        "description": "A145: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is 0/New",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 146,
+        "description": "A146: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 147,
+        "description": "A147: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 148,
+        "description": "A148: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L12",
+    "category": "LimitOrders",
+    "description": "Limit FOK order is accepted and then expires",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 151; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 151,
+        "description": "A151: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 152,
+        "description": "A152: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 153,
+        "description": "A153: Market is open and accepting orders. There is no BUY order for the security in the market",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 155,
+        "description": "A155: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new limit order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 156,
+        "description": "A156: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is 0/New",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 157,
+        "description": "A157: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 158,
+        "description": "A158: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L13",
+    "category": "LimitOrders",
+    "description": "Private limit FOK order fully executes on release (*Note 2*)",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 161; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 161,
+        "description": "A161: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 162,
+        "description": "A162: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 163,
+        "description": "A163: Market is open and accepting orders. There is a BUY limit order for the security in the market with quantity => 6500",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 165,
+        "description": "A165: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new limit order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 166,
+        "description": "A166: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is Z/Private",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 167,
+        "description": "A167: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 168,
+        "description": "A168: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the amendment",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 169,
+        "description": "A169: 5.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 170,
+        "description": "Broker processes the acknowledgement, partial fill and expiry reports",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L14",
+    "category": "LimitOrders",
+    "description": "Limit order with DisplayQty has multiple fills, followed by accepted cancel",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 173; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 173,
+        "description": "A173: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 174,
+        "description": "A174: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 175,
+        "description": "A175: Market is open and accepting orders. There is a SELL limit order for the security in the market with quantity => 400",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 177,
+        "description": "A177: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new limit order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 178,
+        "description": "A178: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order. The 39/OrdStatus is 0/New",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 179,
+        "description": "A179: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 180,
+        "description": "A180: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=F/Trade to report partial fill for 200 shares on the order. Order status is 1/Part Filled",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 181,
+        "description": "A181: 5.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 182,
+        "description": "A182: 6.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=F/Trade to report partial fill for 200 shares on the order. Order status is 1/Part Filled",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 183,
+        "description": "A183: 7.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=F"
+      },
+      {
+        "stepNumber": 184,
+        "description": "A184: 8.0",
+        "direction": "Internal",
+        "expectedResult": "DSE accepts cancel request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 185,
+        "description": "A185: 9.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L15",
+    "category": "LimitOrders",
+    "description": "Request and update order status",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 188; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 188,
+        "description": "A188: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 192,
+        "description": "A192: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted OrderStatusRequest message to request status of an order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=H"
+      },
+      {
+        "stepNumber": 193,
+        "description": "A193: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=I/Order Status to report current status of the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 194,
+        "description": "A194: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L16",
+    "category": "LimitOrders",
+    "description": "A new order valid for session, which is amended to IOC and it expires",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 197; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 197,
+        "description": "A197: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 198,
+        "description": "A198: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 199,
+        "description": "A199: Market is open and accepting orders. There is no active SELL order for the security in the market",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 201,
+        "description": "A201: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new limit buy order valid for current session. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 202,
+        "description": "A202: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 203,
+        "description": "A203: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends amendment request to change order validity to IOC",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 204,
+        "description": "A204: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts amendment request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 205,
+        "description": "A205: 5.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 206,
+        "description": "A206: 6.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L17",
+    "category": "LimitOrders",
+    "description": "A new iceberg order, followed by amendment in quantity and display quantity which is accepted",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 209; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 209,
+        "description": "A209: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 210,
+        "description": "A210: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 211,
+        "description": "A211: Market is open and accepting orders. There is no active SELL order for the security in the market",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 213,
+        "description": "A213: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a new limit buy order valid for current session. The message contains tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 214,
+        "description": "A214: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 215,
+        "description": "A215: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends amendment request to change order quantity and display quantity",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 216,
+        "description": "A216: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts amendment request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 217,
+        "description": "A217: 6.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L18",
+    "category": "LimitOrders",
+    "description": "GTC/GTD orders are rejected as not supported",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 220; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 220,
+        "description": "A220: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 221,
+        "description": "A221: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 222,
+        "description": "A222: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 224,
+        "description": "A224: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a GTC order. The message has the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 225,
+        "description": "A225: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 226,
+        "description": "A226: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "L19",
+    "category": "LimitOrders",
+    "description": "An accepted order placed during Pre-Open session becomes Unplaced at market open (*Note 1*)",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 229; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 229,
+        "description": "A229: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 230,
+        "description": "A230: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 231,
+        "description": "A231: tPre-Opentbuytsellt",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 233,
+        "description": "A233: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message to place a limit order in Pre-Open session with a limit price being the lowest being accepted by DSE during this Pre-Open session. The message has the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 234,
+        "description": "A234: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 235,
+        "description": "A235: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 236,
+        "description": "A236: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 237,
+        "description": "A237: 5.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a OrderCancelReplaceRequest to increase the limit price so that order is \"placed\" again. The message is correctly formatted, and contains all the tags/values as expected by DSE",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 238,
+        "description": "A238: 6.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 239,
+        "description": "A239: 7.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B1",
+    "category": "BlockOrders",
+    "description": "Block order which is executed on acceptance",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 16; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 16,
+        "description": "A16: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 17,
+        "description": "A17: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 18,
+        "description": "A18: Market is open and accepting orders. There is a SELL order for the security in the market with quantity = 40,000",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 20,
+        "description": "A20: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 21,
+        "description": "A21: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 22,
+        "description": "A22: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 23,
+        "description": "A23: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B2",
+    "category": "BlockOrders",
+    "description": "Block order with order validity of IOC expires",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 26; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 26,
+        "description": "A26: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 27,
+        "description": "A27: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 28,
+        "description": "A28: Market is open and accepting orders. There is no active BUY order for the security in the market",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 30,
+        "description": "A30: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order has a validity of ImmediateOrCancel",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 31,
+        "description": "A31: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=0/New to report acceptance of the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 32,
+        "description": "A32: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=C/Expired to report that the IOC order has expired",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 33,
+        "description": "A33: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B3",
+    "category": "BlockOrders",
+    "description": "Block order with order validity of FOK is rejected",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 36; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 36,
+        "description": "A36: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 37,
+        "description": "A37: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 38,
+        "description": "A38: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 40,
+        "description": "A40: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order has a validity of FillOrKill",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 41,
+        "description": "A41: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 42,
+        "description": "A42: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B4",
+    "category": "BlockOrders",
+    "description": "Market order on block board is rejected",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 45; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 45,
+        "description": "A45: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 46,
+        "description": "A46: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 47,
+        "description": "A47: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 49,
+        "description": "A49: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order type is Market",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 50,
+        "description": "A50: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 51,
+        "description": "A51: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B5",
+    "category": "BlockOrders",
+    "description": "Order with minimum fill quantity (MinQty) is rejected on BLOCK board",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 54; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 54,
+        "description": "A54: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 55,
+        "description": "A55: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 56,
+        "description": "A56: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 58,
+        "description": "A58: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order has a MinQty equal to OrderQty",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 59,
+        "description": "A59: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 60,
+        "description": "A60: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B6",
+    "category": "BlockOrders",
+    "description": "Iceberg order (with DisplayQty) on BLOCK board is rejected",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 63; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 63,
+        "description": "A63: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 64,
+        "description": "A64: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 65,
+        "description": "A65: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 67,
+        "description": "A67: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order has a DisplayQty of 10,000",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 68,
+        "description": "A68: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 69,
+        "description": "A69: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B7",
+    "category": "BlockOrders",
+    "description": "Order without ExecInst=WholeOrNone on BLOCK board is rejected",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 72; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 72,
+        "description": "A72: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 73,
+        "description": "A73: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 74,
+        "description": "A74: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 76,
+        "description": "A76: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order message does not have a WholeOrNone flag",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 77,
+        "description": "A77: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 78,
+        "description": "A78: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B8",
+    "category": "BlockOrders",
+    "description": "Private block order valid for session is amended and cancelled (*Note 2*)",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 81; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 81,
+        "description": "A81: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 82,
+        "description": "A82: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 83,
+        "description": "A83: Market is open and accepting orders. There is no BUY order for the security in the market",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 85,
+        "description": "A85: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order is marked as private with 18/ExecInst=S",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 86,
+        "description": "A86: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 87,
+        "description": "A87: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 88,
+        "description": "A88: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the amendment",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 89,
+        "description": "A89: 5.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a request to cancel the order",
+        "sampleFix": "35=F"
+      },
+      {
+        "stepNumber": 90,
+        "description": "A90: 6.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts cancellation request",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 91,
+        "description": "A91: 7.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B9",
+    "category": "BlockOrders",
+    "description": "Private block order amended to lower than allowed market value but rejected when released (*Note 2*)",
+    "importance": "IMPORTANT / CONTINUE ON FAIL",
+    "preconditions": [
+      "Row 94; tIMPORTANT / CONTINUE ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 94,
+        "description": "A94: tIMPORTANT / CONTINUE ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 95,
+        "description": "A95: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 96,
+        "description": "A96: Market is open and accepting orders. There is no SELL order for the security in the market.",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 98,
+        "description": "A98: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE. The order is marked as private with 18/ExecInst=S",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 99,
+        "description": "A99: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the order as a private order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 100,
+        "description": "A100: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 101,
+        "description": "A101: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the amendment",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 102,
+        "description": "A102: 5.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 103,
+        "description": "A103: 6.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the amendment",
+        "sampleFix": "35=9"
+      },
+      {
+        "stepNumber": 104,
+        "description": "A104: 7.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted OrderCancelReplace request to amend the order quantity higher so that order value is >= 500,000 BDT. Broker can also optionally provide 37/OrderID in the request",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 105,
+        "description": "A105: 8.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the amendment",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 106,
+        "description": "A106: 9.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B10",
+    "category": "BlockOrders",
+    "description": "Block order executes on amendment of quantity",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 109; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 109,
+        "description": "A109: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 110,
+        "description": "A110: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 111,
+        "description": "A111: Market is open and accepting orders. There is a SELL order for the security on BLOCK board with quantity = 50000",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 113,
+        "description": "A113: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 114,
+        "description": "A114: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 115,
+        "description": "A115: 3.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 116,
+        "description": "A116: 4.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the amendment",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 117,
+        "description": "A117: 5.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 118,
+        "description": "A118: 6.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "B11",
+    "category": "BlockOrders",
+    "description": "Request and update order status of an order on BLOCK board",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 121; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 121,
+        "description": "A121: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 125,
+        "description": "A125: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted OrderStatusRequest message to request status of an order. The message contains tags/values as required by DSE",
+        "sampleFix": "35=H"
+      },
+      {
+        "stepNumber": 126,
+        "description": "A126: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=I/Order Status to report current status of the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 127,
+        "description": "A127: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "Z1",
+    "category": "Misc",
+    "description": "BUY order on BUYIN board is rejected",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 11; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 11,
+        "description": "A11: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 12,
+        "description": "A12: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 13,
+        "description": "A13: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 15,
+        "description": "A15: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 16,
+        "description": "A16: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 17,
+        "description": "A17: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "Z2",
+    "category": "Misc",
+    "description": "SELL order on BUYIN board is accepted by DSE",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 20; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 20,
+        "description": "A20: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 21,
+        "description": "A21: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 22,
+        "description": "A22: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 24,
+        "description": "A24: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 25,
+        "description": "A25: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 26,
+        "description": "A26: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "Z3",
+    "category": "Misc",
+    "description": "Buy order by non-QI account is rejected on SPUBLIC board",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 29; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 29,
+        "description": "A29: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 30,
+        "description": "A30: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 31,
+        "description": "A31: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 33,
+        "description": "A33: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 34,
+        "description": "A34: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE rejects the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 35,
+        "description": "A35: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "Z4",
+    "category": "Misc",
+    "description": "Buy order by QI account is accepted on SPUBLIC board",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 38; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 38,
+        "description": "A38: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 39,
+        "description": "A39: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 40,
+        "description": "A40: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 42,
+        "description": "A42: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 43,
+        "description": "A43: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 44,
+        "description": "A44: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "Z5",
+    "category": "Misc",
+    "description": "Sell order by even non-QI account is accepted on SPUBLIC board",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 47; tCRITICAL / STOP ON FAIL; Session is connected and heartbeating"
+    ],
+    "steps": [
+      {
+        "stepNumber": 47,
+        "description": "A47: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 48,
+        "description": "A48: Session is connected and heartbeating",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 49,
+        "description": "A49: Market is open and accepting orders",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 51,
+        "description": "A51: 1.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 52,
+        "description": "A52: 2.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 53,
+        "description": "A53: 3.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  },
+  {
+    "id": "Z6",
+    "category": "Misc",
+    "description": "Broker reconnection after DSE fails over to backup FIX gateway",
+    "importance": "CRITICAL / STOP ON FAIL",
+    "preconditions": [
+      "Row 56; tCRITICAL / STOP ON FAIL; Market is open and accepting orders. There is an active SELL limit order for the security in the market with quantity >= 100"
+    ],
+    "steps": [
+      {
+        "stepNumber": 56,
+        "description": "A56: tCRITICAL / STOP ON FAIL",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 57,
+        "description": "A57: Market is open and accepting orders. There is an active SELL limit order for the security in the market with quantity >= 100",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 58,
+        "description": "A58: AccounttBOIDtInvestorID=<InvestorID>",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 60,
+        "description": "A60: 1.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 61,
+        "description": "A61: 2.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted NewOrderSingle message with the tags/values as required by DSE",
+        "sampleFix": "35=D"
+      },
+      {
+        "stepNumber": 62,
+        "description": "A62: 3.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE accepts the order",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 63,
+        "description": "A63: 4.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 64,
+        "description": "A64: 5.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      },
+      {
+        "stepNumber": 65,
+        "description": "A65: 6.0",
+        "direction": "Inbound",
+        "expectedResult": "",
+        "sampleFix": "35=H"
+      },
+      {
+        "stepNumber": 66,
+        "description": "A66: 7.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 67,
+        "description": "A67: 8.0",
+        "direction": "Inbound",
+        "expectedResult": "Broker sends a correctly formatted OrderCancelReplaceRequest message to amend the order price so that order is matched against existing sell order.",
+        "sampleFix": "35=G"
+      },
+      {
+        "stepNumber": 68,
+        "description": "A68: 9.0",
+        "direction": "Outbound",
+        "expectedResult": "",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 69,
+        "description": "A69: 10.0",
+        "direction": "Outbound",
+        "expectedResult": "DSE sends an ExecutionReport message of type 150/ExecType=F/Trade to report that order is fully executed",
+        "sampleFix": "35=8"
+      },
+      {
+        "stepNumber": 70,
+        "description": "A70: 11.0",
+        "direction": "Internal",
+        "expectedResult": "",
+        "sampleFix": null
+      }
+    ]
+  }
+]
