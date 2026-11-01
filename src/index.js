@@ -4,108 +4,107 @@
  * for the Dhaka Stock Exchange (DSE)
  *
  * Application Entry Point
- *
- * Phase 0: This file is a documented skeleton.
- * Full implementation begins in Phase 1 after architecture approval.
- *
- * Architecture: See docs/01-System-Architecture.md
- * FIX Protocol: See docs/04-FIX-Protocol-Design.md
- * Session Mgmt: See docs/05-FIX-Session-Management.md
  */
 
 'use strict';
 
-try {
-  require('dotenv').config();
-} catch (e) {
-  // dotenv not yet installed during Phase 0
-}
+require('dotenv').config();
 
+const config = require('./config');
+const logger = require('./utils/logger');
+const FixArchive = require('./fix/archive/FixArchive');
+const TcpAcceptor = require('./fix/acceptor/TcpAcceptor');
 const packageJson = require('../package.json');
-
-// ============================================================
-// Module imports (Phase 1 implementation will populate these)
-// ============================================================
-
-// const logger = require('./utils/logger');
-// const database = require('./db/database');
-// const TcpAcceptor = require('./fix/acceptor/TcpAcceptor');
-// const { createApp } = require('./api/app');
-// const { createHttpServer } = require('./web/server');
-// const config = require('./config');
-
-// ============================================================
-// Phase 0 Bootstrap
-// ============================================================
 
 console.log(`
 ╔══════════════════════════════════════════════════════════════╗
 ║          DSE-ME Simulator v${packageJson.version.padEnd(36)}║
 ║  Exchange-side FIX Protocol & Matching Engine Simulator      ║
-║  QFL Engineering — Internal Use Only                        ║
+║  QFL Engineering — Official DSE Certification Suite v1.3.4  ║
 ╚══════════════════════════════════════════════════════════════╝
-
-Status : Phase 0 — Architecture Complete
-Mode   : ${(process.env.OPERATING_MODE || 'PROTOCOL').padEnd(50)}
-Node   : ${process.version}
-
-This application entry point will be fully implemented in Phase 1.
-
-Phase 0 deliverables:
-  [x] Project directory structure
-  [x] Full documentation (docs/)
-  [x] Architecture Decision Records (docs/19-ADR/)
-  [x] Database design (docs/08-Database-Design.md)
-  [x] FIX protocol design (docs/04-FIX-Protocol-Design.md)
-  [x] FIX session design (docs/05-FIX-Session-Management.md)
-  [x] FIX archive design (docs/07-FIX-Message-Archive.md)
-  [x] package.json
-  [x] .env.example
-  [x] Dockerfile
-  [x] docker-compose.yml
-  [x] .gitignore / .nvmrc
-
-Phase 1 (pending approval):
-  [ ] TCP FIX Acceptor (src/fix/acceptor/)
-  [ ] FIX Session Manager (src/fix/session/)
-  [ ] FIX Parser and Encoder (src/fix/parser/, src/fix/encoder/)
-  [ ] FIX Message Archive (src/fix/archive/)
-  [ ] MySQL Persistence Layer (src/db/models/, src/db/migrations/)
-  [ ] Web Dashboard (src/web/)
-  [ ] Admin API (src/api/)
-  [ ] Automated Tests (tests/)
-
-See docs/03-Development-Roadmap.md for the full implementation plan.
+Mode          : ${config.app.operatingMode}
+FIX Port      : ${config.fix.port}
+SenderCompID  : ${config.fix.senderCompId}
+TargetCompID  : ${config.fix.targetCompId}
+BeginString   : ${config.fix.beginString} (ApplVerID ${config.fix.defaultApplVerId})
+Archive Dir   : ${config.archive.baseDir}
+Test Cases    : 60 DSE Certification Scenarios Supported (S1-S12, M1-M12, L1-L19, B1-B11, Z1-Z6)
 `);
 
-// ============================================================
-// Phase 1 will implement the following startup sequence:
-// ============================================================
+async function bootstrap() {
+  logger.info({ mode: config.app.operatingMode }, 'Starting DSE-ME Simulator...');
 
-/**
- * PHASE 1 STARTUP SEQUENCE (NOT YET IMPLEMENTED):
- *
- * 1. Validate required environment variables.
- * 2. Initialise Pino structured logger.
- * 3. Connect to MySQL database.
- * 4. Run pending database migrations (on startup in development).
- * 5. Initialise FIX session configurations from database.
- * 6. Create the Express.js application (dashboard + admin API).
- * 7. Create the Socket.IO server.
- * 8. Start the HTTP server on HTTP_PORT.
- * 9. Start the TCP FIX Acceptor on FIX_TCP_PORT.
- * 10. Register graceful shutdown handlers (SIGTERM, SIGINT).
- * 11. Log startup completion.
- *
- * GRACEFUL SHUTDOWN SEQUENCE (SIGTERM):
- * 1. Stop accepting new TCP connections.
- * 2. Send FIX Logout to all active sessions.
- * 3. Flush all pending archive writes.
- * 4. Close all archive file handles.
- * 5. Close MySQL connection pool.
- * 6. Close HTTP server.
- * 7. Exit process.
- */
+  // 1. Initialise FIX Message Archive
+  const archive = new FixArchive({
+    baseDir: config.archive.baseDir,
+    failThreshold: config.archive.failThreshold
+  });
 
-// Placeholder: exit with informational message during Phase 0
-process.exit(0);
+  archive.on('fatalError', async (err) => {
+    logger.fatal({ err: err.message }, 'Fail-controlled archive shutdown triggered!');
+    await shutdown(1);
+  });
+
+  // 2. Initialise and start TCP FIX Acceptor
+  const acceptor = new TcpAcceptor({
+    port: config.fix.port,
+    host: config.fix.host,
+    senderCompId: config.fix.senderCompId,
+    targetCompId: config.fix.targetCompId,
+    beginString: config.fix.beginString,
+    defaultApplVerId: config.fix.defaultApplVerId,
+    heartbeatInterval: config.fix.heartbeatInterval,
+    archive
+  });
+
+  acceptor.on('logon', ({ connectionId, msg }) => {
+    logger.info({ connectionId, sender: msg.senderCompId, target: msg.targetCompId }, 'FIX Logon established successfully');
+  });
+
+  acceptor.on('logout', ({ connectionId, msg }) => {
+    logger.info({ connectionId }, 'FIX Logout completed');
+  });
+
+  acceptor.on('applicationMessage', ({ connectionId, session, msg }) => {
+    logger.info({ connectionId, msgType: msg.msgType, seqNum: msg.msgSeqNum }, 'Inbound application FIX message received');
+  });
+
+  await acceptor.start();
+
+  logger.info(
+    { port: config.fix.port, host: config.fix.host, senderCompId: config.fix.senderCompId, targetCompId: config.fix.targetCompId },
+    'DSE-ME Simulator FIX Acceptor is ready for OMS connections'
+  );
+
+  // 3. Graceful shutdown handler
+  let shuttingDown = false;
+  async function shutdown(exitCode = 0) {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    logger.info('Graceful shutdown initiated...');
+
+    try {
+      await acceptor.stop();
+      await archive.close();
+      logger.info('DSE-ME Simulator stopped cleanly.');
+      process.exit(exitCode);
+    } catch (err) {
+      logger.error({ err }, 'Error during simulator shutdown');
+      process.exit(1);
+    }
+  }
+
+  process.on('SIGINT', () => shutdown(0));
+  process.on('SIGTERM', () => shutdown(0));
+
+  return { acceptor, archive, shutdown };
+}
+
+if (require.main === module) {
+  bootstrap().catch((err) => {
+    logger.fatal({ err: err.message }, 'Failed to start DSE-ME Simulator');
+    process.exit(1);
+  });
+}
+
+module.exports = { bootstrap };
