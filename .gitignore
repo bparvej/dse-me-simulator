@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Environment configuration (never commit)
+.env
+.env.local
+.env.production
+
+# Application logs
+logs/
+*.log
+
+# FIX archive storage (persistent volume, not version controlled)
+storage/
+
+# Coverage reports
+coverage/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+dist/
+build/
+
+# Temporary files
+tmp/
+.tmp/

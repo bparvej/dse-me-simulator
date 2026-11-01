@@ -1,0 +1,109 @@
+# =============================================================
+# DSE-ME Simulator — Docker Compose
+# =============================================================
+
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      target: production
+    container_name: dse-me-simulator
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      APP_NAME: DSE-ME Simulator
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      OPERATING_MODE: ${OPERATING_MODE:-PROTOCOL}
+      HTTP_PORT: ${HTTP_PORT:-3000}
+      HTTP_HOST: 0.0.0.0
+      FIX_TCP_PORT: ${FIX_TCP_PORT:-9876}
+      FIX_TCP_HOST: 0.0.0.0
+      FIX_SENDER_COMP_ID: ${FIX_SENDER_COMP_ID:-DSESIM}
+      FIX_TARGET_COMP_ID: ${FIX_TARGET_COMP_ID:-OMSFIRM}
+      FIX_BEGIN_STRING: ${FIX_BEGIN_STRING:-FIXT.1.1}
+      FIX_DEFAULT_APPL_VER_ID: ${FIX_DEFAULT_APPL_VER_ID:-7}
+      FIX_HEARTBEAT_INTERVAL: ${FIX_HEARTBEAT_INTERVAL:-30}
+      FIX_MAX_LATENCY: ${FIX_MAX_LATENCY:-120}
+      FIX_HEARTBEAT_TOLERANCE: ${FIX_HEARTBEAT_TOLERANCE:-10}
+      FIX_LOGOUT_RESPONSE_TIMEOUT: ${FIX_LOGOUT_RESPONSE_TIMEOUT:-10}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-dse_me_simulator}
+      DB_USER: ${DB_USER:-dse_sim_user}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_POOL_MIN: ${DB_POOL_MIN:-2}
+      DB_POOL_MAX: ${DB_POOL_MAX:-10}
+      ARCHIVE_BASE_DIR: /app/storage/fix-archive
+      ARCHIVE_FAIL_THRESHOLD: ${ARCHIVE_FAIL_THRESHOLD:-10}
+      ARCHIVE_ENABLE_SHA256: ${ARCHIVE_ENABLE_SHA256:-false}
+      ARCHIVE_RETENTION_DAYS: ${ARCHIVE_RETENTION_DAYS:-0}
+    ports:
+      # FIX TCP Acceptor — restrict to OMS network in production
+      - "${FIX_TCP_PORT:-9876}:9876"
+      # HTTP Dashboard — restrict to admin network in production
+      - "${HTTP_PORT:-3000}:3000"
+    volumes:
+      # CRITICAL: Archive must be on persistent storage
+      # Replace ./storage with a durable volume path in production
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    stop_grace_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  mysql:
+    image: mysql:8.0
+    container_name: dse-me-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-dse_me_simulator}
+      MYSQL_USER: ${DB_USER:-dse_sim_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./scripts/mysql-init:/docker-entrypoint-initdb.d:ro
+    ports:
+      # Do NOT expose MySQL publicly in production
+      # Remove this port mapping and use internal Docker network only
+      - "127.0.0.1:3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max_connections=200
+      --innodb_buffer_pool_size=256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+volumes:
+  mysql_data:
+    driver: local
+    name: dse_me_simulator_mysql_data
+
+networks:
+  default:
+    name: dse_me_simulator_network
