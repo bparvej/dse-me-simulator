@@ -24,10 +24,10 @@ const config = {
   fix: {
     port: parseInt(process.env.FIX_TCP_PORT || '9876', 10),
     host: process.env.FIX_TCP_HOST || '0.0.0.0',
-    senderCompId: process.env.FIX_SENDER_COMP_ID || 'TEST',
-    targetCompId: process.env.FIX_TARGET_COMP_ID || 'FAR',
+    senderCompId: process.env.FIX_SENDER_COMP_ID || 'DSESIM',
+    targetCompId: process.env.FIX_TARGET_COMP_ID || 'OMSFIRM',
     beginString: process.env.FIX_BEGIN_STRING || 'FIXT.1.1',
-    defaultApplVerId: process.env.FIX_DEFAULT_APPL_VER_ID || '8',
+    defaultApplVerId: process.env.FIX_DEFAULT_APPL_VER_ID || '7',
     heartbeatInterval: parseInt(process.env.FIX_HEARTBEAT_INTERVAL || '30', 10),
     maxLatency: parseInt(process.env.FIX_MAX_LATENCY || '120', 10),
     heartbeatTolerance: parseInt(process.env.FIX_HEARTBEAT_TOLERANCE || '10', 10),

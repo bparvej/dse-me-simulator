@@ -1,0 +1,87 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<main class="container">
+  <div class="panel-header" style="margin-bottom: 1.5rem;">
+    <div>
+      <h1 class="panel-title" style="font-size: 1.4rem;">
+        <span>📋</span> Official DSE FIX Certification Test Cases (v1.3.4 - 2024)
+      </h1>
+      <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">
+        100% test case coverage for all 60 Dhaka Stock Exchange certification scenarios across all 5 test boards.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+      <span class="stat-badge badge-blue">Total: <%= testCases.length %> Cases</span>
+      <span class="stat-badge badge-green">v1.3.4</span>
+    </div>
+  </div>
+
+  <div class="section-panel">
+    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+      <button class="btn nav-item active" onclick="filterCases('ALL')">All (60)</button>
+      <button class="btn nav-item" onclick="filterCases('SessionTransport')">Session &amp; Transport (S1-S12)</button>
+      <button class="btn nav-item" onclick="filterCases('MarketOrders')">Market Orders (M1-M12)</button>
+      <button class="btn nav-item" onclick="filterCases('LimitOrders')">Limit Orders (L1-L19)</button>
+      <button class="btn nav-item" onclick="filterCases('BlockBoard')">Block Board (B1-B11)</button>
+      <button class="btn nav-item" onclick="filterCases('MiscSpecialBoards')">Misc &amp; Special (Z1-Z6)</button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table" id="testcases-table">
+        <thead>
+          <tr>
+            <th style="width: 80px;">Case ID</th>
+            <th style="width: 160px;">Category</th>
+            <th>Description &amp; Expected Criteria</th>
+            <th style="width: 180px;">Importance</th>
+            <th style="width: 80px;">Steps</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% testCases.forEach(function(tc) { %>
+            <tr class="tc-row" data-category="<%= tc.category %>">
+              <td class="mono-cell" style="color: var(--accent-cyan); font-weight: 700;"><%= tc.id %></td>
+              <td><span class="stat-badge badge-cyan"><%= tc.category %></span></td>
+              <td>
+                <div style="font-weight: 600;"><%= tc.description %></div>
+                <% if (tc.steps && tc.steps.length > 0) { %>
+                  <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.2rem;">
+                    Key criteria: <%= tc.steps[0].expectedResult || tc.steps[0].description %>
+                  </div>
+                <% } %>
+              </td>
+              <td>
+                <span class="stat-badge <%= tc.importance && tc.importance.includes('CRITICAL') ? 'badge-blue' : 'badge-green' %>">
+                  <%= tc.importance || 'STANDARD' %>
+                </span>
+              </td>
+              <td class="mono-cell"><%= tc.steps ? tc.steps.length : 0 %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script>
+  function filterCases(category) {
+    const rows = document.querySelectorAll('.tc-row');
+    rows.forEach(row => {
+      if (category === 'ALL' || row.getAttribute('data-category') === category) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    document.querySelectorAll('.btn.nav-item').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+  }
+</script>
+
+<%- include('partials/footer') %>
+

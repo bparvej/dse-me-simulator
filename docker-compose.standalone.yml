@@ -1,0 +1,53 @@
+# =============================================================
+# DSE-ME Simulator — Standalone Docker Compose (No external DB)
+# Ideal for rapid local testing of Protocol Mode & FIX Acceptor
+# =============================================================
+
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      target: production
+    container_name: dse-me-simulator-standalone
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      APP_NAME: DSE-ME Simulator
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      OPERATING_MODE: ${OPERATING_MODE:-PROTOCOL}
+      HTTP_PORT: ${HTTP_PORT:-3000}
+      HTTP_HOST: 0.0.0.0
+      FIX_TCP_PORT: ${FIX_TCP_PORT:-9876}
+      FIX_TCP_HOST: 0.0.0.0
+      FIX_SENDER_COMP_ID: ${FIX_SENDER_COMP_ID:-DSESIM}
+      FIX_TARGET_COMP_ID: ${FIX_TARGET_COMP_ID:-OMSFIRM}
+      FIX_BEGIN_STRING: ${FIX_BEGIN_STRING:-FIXT.1.1}
+      FIX_DEFAULT_APPL_VER_ID: ${FIX_DEFAULT_APPL_VER_ID:-7}
+      FIX_HEARTBEAT_INTERVAL: ${FIX_HEARTBEAT_INTERVAL:-30}
+      FIX_MAX_LATENCY: ${FIX_MAX_LATENCY:-120}
+      FIX_HEARTBEAT_TOLERANCE: ${FIX_HEARTBEAT_TOLERANCE:-10}
+      FIX_LOGOUT_RESPONSE_TIMEOUT: ${FIX_LOGOUT_RESPONSE_TIMEOUT:-10}
+      ARCHIVE_BASE_DIR: /app/storage/fix-archive
+      ARCHIVE_FAIL_THRESHOLD: 10
+      ARCHIVE_ENABLE_SHA256: false
+    ports:
+      - "${FIX_TCP_PORT:-9876}:${FIX_TCP_PORT:-9876}"
+      - "${HTTP_PORT:-3000}:${HTTP_PORT:-3000}"
+    volumes:
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || wget -qO- http://localhost:3001/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    stop_grace_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+

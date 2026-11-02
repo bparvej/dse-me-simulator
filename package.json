@@ -23,6 +23,10 @@
     "db:migrate:undo:all": "sequelize-cli db:migrate:undo:all",
     "db:migration:create": "sequelize-cli migration:create",
     "db:seed": "sequelize-cli db:seed:all",
+    "client:test": "node scripts/test-fix-client.js",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:standalone": "docker compose -f docker-compose.standalone.yml up -d",
     "lint": "eslint src/ tests/ --ext .js"
   },
   "dependencies": {

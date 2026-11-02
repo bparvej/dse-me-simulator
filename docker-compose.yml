@@ -44,20 +44,20 @@ services:
       ARCHIVE_RETENTION_DAYS: ${ARCHIVE_RETENTION_DAYS:-0}
     ports:
       # FIX TCP Acceptor — restrict to OMS network in production
-      - "${FIX_TCP_PORT:-9876}:9876"
+      - "${FIX_TCP_PORT:-9876}:${FIX_TCP_PORT:-9876}"
       # HTTP Dashboard — restrict to admin network in production
-      - "${HTTP_PORT:-3000}:3000"
+      - "${HTTP_PORT:-3000}:${HTTP_PORT:-3000}"
     volumes:
       # CRITICAL: Archive must be on persistent storage
       # Replace ./storage with a durable volume path in production
       - ./storage:/app/storage
       - ./logs:/app/logs
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
-      interval: 30s
-      timeout: 10s
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || wget -qO- http://localhost:3001/health || exit 1"]
+      interval: 15s
+      timeout: 5s
       retries: 3
-      start_period: 30s
+      start_period: 15s
     stop_grace_period: 30s
     logging:
       driver: "json-file"
@@ -78,9 +78,8 @@ services:
       - mysql_data:/var/lib/mysql
       - ./scripts/mysql-init:/docker-entrypoint-initdb.d:ro
     ports:
-      # Do NOT expose MySQL publicly in production
-      # Remove this port mapping and use internal Docker network only
-      - "127.0.0.1:3306:3306"
+      # Exposing MySQL on host (changed from 3306 to 3307 to prevent port collisions)
+      - "127.0.0.1:${DB_PORT:-3307}:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s

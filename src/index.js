@@ -14,6 +14,7 @@ const config = require('./config');
 const logger = require('./utils/logger');
 const FixArchive = require('./fix/archive/FixArchive');
 const TcpAcceptor = require('./fix/acceptor/TcpAcceptor');
+const WebServer = require('./web/server');
 const packageJson = require('../package.json');
 
 console.log(`
@@ -76,7 +77,24 @@ async function bootstrap() {
     'DSE-ME Simulator FIX Acceptor is ready for OMS connections'
   );
 
-  // 3. Graceful shutdown handler
+  // 3. Initialise and start Web Dashboard & HTTP API Server
+  const webServer = new WebServer({
+    port: config.http.port,
+    host: config.http.host,
+    config,
+    acceptor,
+    archive,
+    logger
+  });
+
+  await webServer.start();
+
+  logger.info(
+    { port: webServer.port, host: config.http.host },
+    `DSE-ME Web Dashboard is available at http://${config.http.host === '0.0.0.0' ? 'localhost' : config.http.host}:${webServer.port}`
+  );
+
+  // 4. Graceful shutdown handler
   let shuttingDown = false;
   async function shutdown(exitCode = 0) {
     if (shuttingDown) return;
@@ -84,6 +102,7 @@ async function bootstrap() {
     logger.info('Graceful shutdown initiated...');
 
     try {
+      await webServer.stop();
       await acceptor.stop();
       await archive.close();
       logger.info('DSE-ME Simulator stopped cleanly.');
@@ -97,7 +116,7 @@ async function bootstrap() {
   process.on('SIGINT', () => shutdown(0));
   process.on('SIGTERM', () => shutdown(0));
 
-  return { acceptor, archive, shutdown };
+  return { acceptor, archive, webServer, shutdown };
 }
 
 if (require.main === module) {

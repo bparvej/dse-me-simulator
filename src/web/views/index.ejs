@@ -1,0 +1,313 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<main class="container">
+  <!-- System Banner Box -->
+  <div class="banner-card">
+    <pre class="banner-pre">
+╔══════════════════════════════════════════════════════════════╗
+║          DSE-ME Simulator v<%= version.padEnd(36) %>║
+║  Exchange-side FIX Protocol & Matching Engine Simulator      ║
+║  QFL Engineering — Official DSE Certification Suite v1.3.4  ║
+╚══════════════════════════════════════════════════════════════╝
+Mode          : <%= fixConfig.operatingMode %>
+FIX Port      : <%= ports.fixPort %>
+SenderCompID  : <%= fixConfig.senderCompId %>
+TargetCompID  : <%= fixConfig.targetCompId %>
+BeginString   : <%= fixConfig.beginString %> (ApplVerID <%= fixConfig.defaultApplVerId %>)
+Archive Dir   : <%= archiveStatus.baseDir %>
+Test Cases    : <%= testCasesCount %> DSE Certification Scenarios Supported (S1-S12, M1-M12, L1-L19, B1-B11, Z1-Z6)
+INFO: TCP FIX Acceptor started and listening (port: <%= ports.fixPort %>, host: <%= ports.fixHost %>)
+INFO: DSE-ME Simulator FIX Acceptor is ready for OMS connections
+    </pre>
+  </div>
+
+  <!-- Primary Network & Port Information Cards -->
+  <div class="grid-cols-4">
+    <!-- FIX TCP Acceptor Port Card -->
+    <div class="stat-card highlight">
+      <div class="stat-header">
+        <span class="stat-title">FIX TCP Acceptor</span>
+        <span class="stat-badge badge-green" id="fix-port-badge"><%= ports.fixStatus %></span>
+      </div>
+      <div class="port-display-box">
+        <div>
+          <div class="port-label">PORT (TCP)</div>
+          <div class="port-number"><%= ports.fixPort %></div>
+        </div>
+        <div style="text-align: right;">
+          <div class="port-label">HOST BINDING</div>
+          <div style="font-family: var(--font-mono); color: var(--text-secondary); font-size: 0.95rem;"><%= ports.fixHost %></div>
+        </div>
+      </div>
+      <div class="stat-sub" style="margin-top: 0.75rem;">
+        Exchanged over standard TCP socket (FIXT 1.1 / FIX 5.0)
+      </div>
+    </div>
+
+    <!-- HTTP Web Dashboard Port Card -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-title">Web Dashboard & API</span>
+        <span class="stat-badge badge-blue">ONLINE</span>
+      </div>
+      <div class="port-display-box">
+        <div>
+          <div class="port-label">PORT (HTTP)</div>
+          <div class="port-number" style="color: var(--accent-blue);"><%= ports.httpPort %></div>
+        </div>
+        <div style="text-align: right;">
+          <div class="port-label">HOST BINDING</div>
+          <div style="font-family: var(--font-mono); color: var(--text-secondary); font-size: 0.95rem;"><%= ports.httpHost %></div>
+        </div>
+      </div>
+      <div class="stat-sub" style="margin-top: 0.75rem;">
+        Dashboard, Socket.IO &amp; <a href="/health" style="color: var(--accent-cyan); text-decoration: none;">/health endpoint</a>
+      </div>
+    </div>
+
+    <!-- Active Sessions Card -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-title">Active FIX Sessions</span>
+        <span class="stat-badge badge-cyan" id="sessions-badge"><%= activeSessions.length %> Active</span>
+      </div>
+      <div class="stat-value" id="session-count"><%= activeSessions.length %></div>
+      <div class="stat-sub">
+        Connected OMS &amp; Broker clients
+      </div>
+    </div>
+
+    <!-- Simulator Uptime & Mode Card -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-title">Simulator Mode</span>
+        <span class="stat-badge badge-green"><%= fixConfig.operatingMode %></span>
+      </div>
+      <div class="stat-value" style="font-size: 1.45rem; color: var(--accent-cyan);"><%= uptime %></div>
+      <div class="stat-sub">
+        Uptime • Total Inbound: <span id="inbound-count"><%= stats.totalInboundMessages %></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIX Protocol Configuration Details -->
+  <div class="section-panel">
+    <div class="panel-header">
+      <h2 class="panel-title">
+        <span>⚙️</span> FIX Protocol &amp; Exchange Profile
+      </h2>
+      <span class="stat-badge badge-blue">DSE UAT Specification v1.3.4</span>
+    </div>
+    <div class="kv-grid">
+      <div class="kv-item">
+        <div class="kv-key">Simulator CompID (Tag 49)</div>
+        <div class="kv-value" style="color: var(--accent-cyan);"><%= fixConfig.senderCompId %></div>
+      </div>
+      <div class="kv-item">
+        <div class="kv-key">Target CompID (Tag 56)</div>
+        <div class="kv-value" style="color: var(--accent-green);"><%= fixConfig.targetCompId %></div>
+      </div>
+      <div class="kv-item">
+        <div class="kv-key">BeginString (Tag 8)</div>
+        <div class="kv-value"><%= fixConfig.beginString %></div>
+      </div>
+      <div class="kv-item">
+        <div class="kv-key">ApplVerID (Tag 1128)</div>
+        <div class="kv-value"><%= fixConfig.defaultApplVerId %> (FIX.5.0)</div>
+      </div>
+      <div class="kv-item">
+        <div class="kv-key">Heartbeat Interval (Tag 108)</div>
+        <div class="kv-value"><%= fixConfig.heartbeatInterval %> seconds</div>
+      </div>
+      <div class="kv-item">
+        <div class="kv-key">Heartbeat Tolerance</div>
+        <div class="kv-value">+<%= fixConfig.heartbeatTolerance %> seconds</div>
+      </div>
+      <div class="kv-item">
+        <div class="kv-key">Message Archive Path</div>
+        <div class="kv-value" style="font-size: 0.8rem; word-break: break-all;"><%= archiveStatus.baseDir %></div>
+      </div>
+      <div class="kv-item">
+        <div class="kv-key">Archive Status</div>
+        <div class="kv-value" style="color: <%= archiveStatus.healthy ? 'var(--accent-green)' : 'var(--accent-rose)' %>;">
+          <%= archiveStatus.healthy ? 'HEALTHY (0 disk errors)' : 'WARNING: ' + archiveStatus.failures + ' errors' %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active FIX Sessions Table -->
+  <div class="section-panel">
+    <div class="panel-header">
+      <h2 class="panel-title">
+        <span>🔌</span> Connected FIX Sessions
+      </h2>
+      <a href="/sessions" class="nav-item">Full Session Monitor →</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Connection ID</th>
+            <th>Remote Client</th>
+            <th>SenderCompID</th>
+            <th>TargetCompID</th>
+            <th>State</th>
+            <th>In Seq</th>
+            <th>Out Seq</th>
+            <th>Last Recv</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="sessions-table-body">
+          <% if (activeSessions.length === 0) { %>
+            <tr>
+              <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                No active OMS connections. Simulator is ready on TCP Port <strong><%= ports.fixPort %></strong>.
+                <br>
+                <code style="font-family: var(--font-mono); color: var(--accent-cyan); font-size: 0.8rem;">
+                  Connect OMS or test client using SenderCompID: <%= fixConfig.targetCompId %>, TargetCompID: <%= fixConfig.senderCompId %>
+                </code>
+              </td>
+            </tr>
+          <% } else { %>
+            <% activeSessions.forEach(function(s) { %>
+              <tr id="row-<%= s.connectionId %>">
+                <td class="mono-cell" style="color: var(--accent-cyan);"><%= s.connectionId %></td>
+                <td class="mono-cell"><%= s.remoteAddress %></td>
+                <td class="mono-cell"><%= s.senderCompId %></td>
+                <td class="mono-cell"><%= s.targetCompId %></td>
+                <td><span class="stat-badge badge-green"><%= s.state %></span></td>
+                <td class="mono-cell"><%= s.inboundSeqNum %></td>
+                <td class="mono-cell"><%= s.outboundSeqNum %></td>
+                <td><%= s.lastReceivedAt %></td>
+                <td>
+                  <button class="btn btn-danger" onclick="disconnectSession('<%= s.connectionId %>')">Disconnect</button>
+                </td>
+              </tr>
+            <% }); %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Live Event Terminal Stream -->
+  <div class="section-panel">
+    <div class="panel-header">
+      <h2 class="panel-title">
+        <span>📟</span> Live Event &amp; FIX Stream
+      </h2>
+      <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">Real-time Socket.IO Stream</span>
+    </div>
+    <div class="log-terminal" id="log-terminal">
+      <% recentLogs.forEach(function(l) { %>
+        <div class="log-line">
+          <span class="log-time">[<%= l.timestamp.substring(11, 19) %>]</span>
+          <span class="log-type <%= l.type %>"><%= l.type %></span>
+          <span class="log-msg"><%= l.message %></span>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</main>
+
+<script>
+  const socket = io();
+  const terminal = document.getElementById('log-terminal');
+  const connStatus = document.getElementById('connection-status');
+  const sessionCount = document.getElementById('session-count');
+  const sessionsBadge = document.getElementById('sessions-badge');
+  const sessionsTableBody = document.getElementById('sessions-table-body');
+  const fixPort = <%= ports.fixPort %>;
+  const targetCompId = '<%= fixConfig.targetCompId %>';
+  const senderCompId = '<%= fixConfig.senderCompId %>';
+
+  socket.on('connect', () => {
+    connStatus.textContent = 'CONNECTED';
+    connStatus.style.color = 'var(--accent-green)';
+  });
+
+  socket.on('disconnect', () => {
+    connStatus.textContent = 'DISCONNECTED';
+    connStatus.style.color = 'var(--accent-rose)';
+  });
+
+  socket.on('new_log', (entry) => {
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    const time = entry.timestamp ? entry.timestamp.substring(11, 19) : new Date().toLocaleTimeString();
+    line.innerHTML = `
+      <span class="log-time">[${time}]</span>
+      <span class="log-type ${entry.type}">${entry.type}</span>
+      <span class="log-msg">${escapeHtml(entry.message)}</span>
+    `;
+    terminal.insertBefore(line, terminal.firstChild);
+    while (terminal.children.length > 100) {
+      terminal.removeChild(terminal.lastChild);
+    }
+  });
+
+  socket.on('session_updated', (sessions) => {
+    sessionCount.textContent = sessions.length;
+    sessionsBadge.textContent = `${sessions.length} Active`;
+    renderSessions(sessions);
+  });
+
+  socket.on('stats_updated', (stats) => {
+    const inCount = document.getElementById('inbound-count');
+    if (inCount) inCount.textContent = stats.totalInboundMessages;
+  });
+
+  function renderSessions(sessions) {
+    if (sessions.length === 0) {
+      sessionsTableBody.innerHTML = `
+        <tr>
+          <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+            No active OMS connections. Simulator is ready on TCP Port <strong>${fixPort}</strong>.
+            <br>
+            <code style="font-family: var(--font-mono); color: var(--accent-cyan); font-size: 0.8rem;">
+              Connect OMS or test client using SenderCompID: ${targetCompId}, TargetCompID: ${senderCompId}
+            </code>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    sessionsTableBody.innerHTML = sessions.map(s => `
+      <tr id="row-${s.connectionId}">
+        <td class="mono-cell" style="color: var(--accent-cyan);">${s.connectionId}</td>
+        <td class="mono-cell">${s.remoteAddress}</td>
+        <td class="mono-cell">${s.senderCompId}</td>
+        <td class="mono-cell">${s.targetCompId}</td>
+        <td><span class="stat-badge badge-green">${s.state}</span></td>
+        <td class="mono-cell">${s.inboundSeqNum}</td>
+        <td class="mono-cell">${s.outboundSeqNum}</td>
+        <td>${s.lastReceivedAt}</td>
+        <td>
+          <button class="btn btn-danger" onclick="disconnectSession('${s.connectionId}')">Disconnect</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function disconnectSession(id) {
+    try {
+      const res = await fetch(`/api/sessions/${encodeURIComponent(id)}/disconnect`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) alert(data.error || 'Failed to disconnect');
+    } catch (err) {
+      alert('Error disconnecting session: ' + err.message);
+    }
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+</script>
+
+<%- include('partials/footer') %>
+

@@ -1,0 +1,87 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<main class="container">
+  <div class="panel-header" style="margin-bottom: 1.5rem;">
+    <div>
+      <h1 class="panel-title" style="font-size: 1.4rem;">
+        <span>🔌</span> FIX Session Monitor
+      </h1>
+      <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">
+        Real-time view of active FIX connections, sequence numbers, and counterparty heartbeats.
+      </p>
+    </div>
+    <div>
+      <span class="stat-badge badge-green" style="font-size: 0.9rem;">
+        Listening Port: <%= config.fix.port %> (TCP)
+      </span>
+    </div>
+  </div>
+
+  <div class="section-panel">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Session / Connection ID</th>
+            <th>Remote Client IP:Port</th>
+            <th>SenderCompID (DSE)</th>
+            <th>TargetCompID (OMS)</th>
+            <th>Session State</th>
+            <th>Inbound Seq#</th>
+            <th>Outbound Seq#</th>
+            <th>Last Received</th>
+            <th>Last Sent</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="sessions-table-body">
+          <% if (activeSessions.length === 0) { %>
+            <tr>
+              <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 2.5rem;">
+                No active connections. The FIX Acceptor is waiting on <strong>port <%= config.fix.port %></strong>.
+              </td>
+            </tr>
+          <% } else { %>
+            <% activeSessions.forEach(function(s) { %>
+              <tr id="row-<%= s.connectionId %>">
+                <td class="mono-cell" style="color: var(--accent-cyan);"><%= s.connectionId %></td>
+                <td class="mono-cell"><%= s.remoteAddress %></td>
+                <td class="mono-cell"><%= s.senderCompId %></td>
+                <td class="mono-cell"><%= s.targetCompId %></td>
+                <td><span class="stat-badge badge-green"><%= s.state %></span></td>
+                <td class="mono-cell"><%= s.inboundSeqNum %></td>
+                <td class="mono-cell"><%= s.outboundSeqNum %></td>
+                <td><%= s.lastReceivedAt %></td>
+                <td><%= s.lastSentAt %></td>
+                <td>
+                  <button class="btn btn-danger" onclick="disconnectSession('<%= s.connectionId %>')">Disconnect</button>
+                </td>
+              </tr>
+            <% }); %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script>
+  const socket = io();
+  socket.on('session_updated', () => {
+    window.location.reload();
+  });
+
+  async function disconnectSession(id) {
+    if (!confirm('Disconnect session ' + id + '?')) return;
+    try {
+      const res = await fetch(`/api/sessions/${encodeURIComponent(id)}/disconnect`, { method: 'POST' });
+      if (res.ok) window.location.reload();
+    } catch (err) {
+      alert('Error disconnecting session');
+    }
+  }
+</script>
+
+<%- include('partials/footer') %>
+

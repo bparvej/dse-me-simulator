@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 
 # Install production dependencies only
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Production stage
 FROM node:22-alpine AS production
@@ -43,8 +43,8 @@ EXPOSE 3000
 EXPOSE 9876
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD wget -qO- http://localhost:3000/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+  CMD wget -qO- http://localhost:3000/health || wget -qO- http://localhost:3001/health || exit 1
 
 # Graceful shutdown support
 STOPSIGNAL SIGTERM

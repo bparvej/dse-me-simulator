@@ -1,0 +1,54 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<main class="container">
+  <div class="panel-header" style="margin-bottom: 1.5rem;">
+    <div>
+      <h1 class="panel-title" style="font-size: 1.4rem;">
+        <span>📁</span> FIX Message Archive Explorer
+      </h1>
+      <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">
+        Dual-tier audit log capturing every raw FIX byte exchanged over the wire with nanosecond-level integrity.
+      </p>
+    </div>
+    <span class="stat-badge badge-green">Storage: <%= config.archive.baseDir %></span>
+  </div>
+
+  <div class="section-panel">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date Partition</th>
+            <th>Session</th>
+            <th>File Type</th>
+            <th>Size (Bytes)</th>
+            <th>Last Modified</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (archiveFiles.length === 0) { %>
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2.5rem;">
+                No archived FIX messages yet. Messages are persisted automatically once connections exchange packets.
+              </td>
+            </tr>
+          <% } else { %>
+            <% archiveFiles.forEach(function(f) { %>
+              <tr>
+                <td class="mono-cell"><%= f.partition %></td>
+                <td class="mono-cell" style="color: var(--accent-cyan);"><%= f.session %></td>
+                <td><span class="stat-badge <%= f.fileName.includes('inbound') ? 'badge-blue' : 'badge-green' %>"><%= f.fileName %></span></td>
+                <td class="mono-cell"><%= f.size %></td>
+                <td><%= new Date(f.mtime).toLocaleString() %></td>
+              </tr>
+            <% }); %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+
